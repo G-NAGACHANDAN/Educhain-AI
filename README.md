@@ -1,6 +1,7 @@
 # EduChain: Blockchain-Based Education Credential System
 
-![EduChain System Overview](image_4.png)
+
+<img width="2304" height="1536" alt="image_4" src="https://github.com/user-attachments/assets/fa1ad9ae-5cf3-4e07-a47c-33fb3545ad78" />
 
 ## 🌐 Overview
 
@@ -21,7 +22,9 @@ EduChain anchors educational achievements on the blockchain. Universities and ce
 ### 2. NFT Badges & Verifiable Credentials
 Specific achievements, skill completions, or micro-credentials are issued as unique non-fungible tokens (NFTs).
 
-![NFT Badge Verification](image_6.png)
+
+<img width="2304" height="1536" alt="image_6" src="https://github.com/user-attachments/assets/73b91330-2310-49ca-94b9-3181c1d1dd5d" />
+
 
 ### 3. AI-Powered Skill Extraction
 EduChain utilizes Natural Language Processing (NLP) to analyze unstructured data from resumes and transcripts, extracting a verified skill taxonomy for the user.
@@ -29,12 +32,14 @@ EduChain utilizes Natural Language Processing (NLP) to analyze unstructured data
 * **Automated Parsing:** Convert existing documents into structured, verifiable skill profiles.
 * **Gap Analysis:** The AI suggests missing skills based on the user’s target job roles.
 
-![AI Skill Extraction](image_7.png)
+<img width="2304" height="1536" alt="image_7" src="https://github.com/user-attachments/assets/de8d9245-3252-4a8c-8453-a9a49f4d6312" />
+
 
 ### 4. ATS-Friendly Resume Builder
 The platform includes a sophisticated resume builder designed to pass Applicant Tracking Systems (ATS). The dynamic builder optimizes formatting and keyword density using the AI-extracted, verified skill profile.
 
-![ATS Resume Builder Interface](image_5.png)
+<img width="2304" height="1536" alt="image_5" src="https://github.com/user-attachments/assets/e0dc3dce-f379-4261-a870-cc475546e6a1" />
+
 
 ---
 
@@ -67,9 +72,17 @@ Before setting up the project, ensure you have the following installed:
 
 ---
 
-## 💻 Installation & Setup
+## 🤝 Contributing
 
-### 1. Clone the Repository
-```bash
-git clone [https://github.com/yourusername/educhain.git](https://github.com/yourusername/educhain.git)
-cd educhain
+We welcome contributions to EduChain! Please check the [Contributing Guidelines](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">
+  <b>Developer: G NAGACHANDAN</b> <br>
+  <i>Building the future of decentralized education.</i>
+</p>
