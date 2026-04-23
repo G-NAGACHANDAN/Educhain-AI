@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | EduChain AI+</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-blue-600 to-green-600 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-2xl font-bold">🎓 Student Dashboard</div>
+                <div class="space-x-4">
+                    <a href="/" class="hover:text-gray-200">Home</a>
+                    <a href="/admin" class="hover:text-gray-200">Admin</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">My Credentials</h1>
+            <p class="text-gray-600">Wallet: <span id="walletAddress" class="font-mono text-sm">{{ wallet_address }}</span></p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="mb-6 border-b border-gray-300">
+            <div class="flex space-x-4">
+                <button onclick="showTab('certificates')" id="tab-certificates" class="px-6 py-3 font-semibold border-b-4 border-blue-600 text-blue-600">
+                    My Certificates
+                </button>
+                <button onclick="showTab('nft')" id="tab-nft" class="px-6 py-3 font-semibold text-gray-600 hover:text-blue-600">
+                    NFT Badges
+                </button>
+                <button onclick="showTab('resume')" id="tab-resume" class="px-6 py-3 font-semibold text-gray-600 hover:text-blue-600">
+                    Resume
+                </button>
+                <button onclick="showTab('jobs')" id="tab-jobs" class="px-6 py-3 font-semibold text-gray-600 hover:text-blue-600">
+                    Job Matches
+                </button>
+                <button onclick="showTab('chatbot')" id="tab-chatbot" class="px-6 py-3 font-semibold text-gray-600 hover:text-blue-600">
+                    AI Assistant
+                </button>
+            </div>
+        </div>
+
+        <!-- Certificates Tab -->
+        <div id="content-certificates" class="tab-content">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Blockchain-Verified Certificates</h2>
+                <div id="certificatesList">Loading certificates...</div>
+            </div>
+        </div>
+
+        <!-- NFT Badges Tab -->
+        <div id="content-nft" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">My NFT Badge Collection</h2>
+                <div id="nftBadges" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+
+        <!-- Resume Tab -->
+        <div id="content-resume" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg max-w-2xl">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">AI-Powered Resume</h2>
+                <p class="text-gray-600 mb-6">Generate a professional resume from your blockchain-verified credentials with AI-extracted skills and achievements.</p>
+                
+                <div id="resumePreview" class="mb-6 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="font-bold mb-2">Resume Preview</h3>
+                    <div id="resumeContent" class="text-gray-700">
+                        Click "Generate Resume" to create your professional resume
+                    </div>
+                </div>
+                
+                <button onclick="generateResume()" class="bg-gradient-to-r from-blue-600 to-green-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-green-700">
+                    Generate AI Resume (PDF)
+                </button>
+            </div>
+        </div>
+
+        <!-- Jobs Tab -->
+        <div id="content-jobs" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">AI Job Recommendations</h2>
+                <p class="text-gray-600 mb-6">AI-matched job opportunities based on your skills and achievements</p>
+                
+                <button onclick="loadJobs()" class="mb-6 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
+                    Get Personalized Recommendations
+                </button>
+                
+                <div id="jobsList"></div>
+            </div>
+        </div>
+
+        <!-- Chatbot Tab -->
+        <div id="content-chatbot" class="tab-content hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">AI Assistant</h2>
+                
+                <div id="chatHistory" class="h-96 overflow-y-auto mb-4 p-4 bg-gray-50 rounded-lg space-y-4">
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <p class="text-sm font-semibold text-blue-800">AI Assistant</p>
+                        <p class="text-gray-700">Hello! I can help you verify certificates, view your credentials, generate your resume, and recommend jobs. What would you like to do?</p>
+                    </div>
+                </div>
+                
+                <form id="chatForm" class="flex space-x-2">
+                    <input 
+                        type="text" 
+                        id="chatInput" 
+                        placeholder="Ask me anything..." 
+                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
+                        Send
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const walletAddress = "{{ wallet_address }}";
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[id^="tab-"]').forEach(el => {
+                el.classList.remove('border-b-4', 'border-blue-600', 'text-blue-600');
+                el.classList.add('text-gray-600');
+            });
+            
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('border-b-4', 'border-blue-600', 'text-blue-600');
+            document.getElementById(`tab-${tabName}`).classList.remove('text-gray-600');
+        }
+
+        async function loadCertificates() {
+            const response = await fetch(`/api/student_certificates/${walletAddress}`);
+            const data = await response.json();
+            const certificates = data.certificates;
+            
+            if (certificates.length === 0) {
+                document.getElementById('certificatesList').innerHTML = '<p class="text-gray-600">No certificates yet. Complete courses to earn blockchain-verified credentials!</p>';
+                return;
+            }
+            
+            let html = '<div class="space-y-4">';
+            certificates.forEach(certData => {
+                const cert = certData.certificate;
+                html += `
+                    <div class="border border-gray-300 rounded-lg p-6 hover:shadow-lg transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Certificate of ${cert.type}</h3>
+                                <p class="text-gray-600">${cert.course}</p>
+                            </div>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">Grade: ${cert.grade}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm text-gray-700 mb-4">
+                            <p><strong>Year:</strong> ${cert.year}</p>
+                            <p><strong>ID:</strong> ${cert.certificate_id}</p>
+                            <p><strong>Issued:</strong> ${new Date(cert.issued_date).toLocaleDateString()}</p>
+                            <p><strong>Block Hash:</strong> ${certData.block_hash.substring(0, 16)}...</p>
+                        </div>
+                        ${cert.skills && cert.skills.length > 0 ? `
+                        <div class="mb-4">
+                            <p class="font-semibold mb-2 text-gray-700">Skills Extracted:</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${cert.skills.map(skill => `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">${skill}</span>`).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        <a href="/verify/${cert.certificate_id}" target="_blank" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">View Certificate</a>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            document.getElementById('certificatesList').innerHTML = html;
+            
+            // Load NFT badges
+            let nftHtml = '';
+            certificates.forEach(certData => {
+                const cert = certData.certificate;
+                const nftPath = `/static/nft_badges/${cert.certificate_id}_nft.png`;
+                nftHtml += `
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <img src="${nftPath}" alt="NFT Badge" class="w-full" onerror="this.src='/static/placeholder.png'">
+                        <div class="p-4">
+                            <p class="font-bold text-gray-800">${cert.type}</p>
+                            <p class="text-sm text-gray-600">${cert.course}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('nftBadges').innerHTML = nftHtml || '<p class="text-gray-600">No NFT badges yet</p>';
+        }
+
+        async function generateResume() {
+            document.getElementById('resumeContent').innerHTML = '<p class="text-gray-600">Generating AI-powered resume...</p>';
+            
+            try {
+                window.location.href = `/api/generate_resume/${walletAddress}`;
+                setTimeout(() => {
+                    document.getElementById('resumeContent').innerHTML = '<p class="text-green-600">✅ Resume downloaded successfully!</p>';
+                }, 1000);
+            } catch (error) {
+                document.getElementById('resumeContent').innerHTML = '<p class="text-red-600">Error generating resume</p>';
+            }
+        }
+
+        async function loadJobs() {
+            document.getElementById('jobsList').innerHTML = '<p class="text-gray-600">Loading AI recommendations...</p>';
+            
+            const response = await fetch(`/api/recommend_jobs/${walletAddress}`);
+            const data = await response.json();
+            
+            if (data.error) {
+                document.getElementById('jobsList').innerHTML = `<p class="text-red-600">${data.error}</p>`;
+                return;
+            }
+            
+            const jobs = data.recommendations;
+            
+            if (jobs.length === 0) {
+                document.getElementById('jobsList').innerHTML = '<p class="text-gray-600">No job recommendations available yet. Complete more courses to build your skill profile!</p>';
+                return;
+            }
+            
+            let html = '<div class="space-y-4">';
+            jobs.forEach(item => {
+                const job = item.job;
+                const match = item.match_percentage;
+                const matchedSkills = item.matched_skills;
+                
+                html += `
+                    <div class="border border-gray-300 rounded-lg p-6 hover:shadow-lg transition">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">${job.title}</h3>
+                                <p class="text-gray-600">${job.company} • ${job.location}</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-${match >= 70 ? 'green' : match >= 50 ? 'yellow' : 'gray'}-600">${match}%</div>
+                                <div class="text-xs text-gray-600">Match</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 mb-4">${job.description}</p>
+                        <div class="mb-4">
+                            <p class="font-semibold mb-2 text-sm text-gray-700">Matched Skills:</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${matchedSkills.map(skill => `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${skill}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
+                            <p><strong>Type:</strong> ${job.type}</p>
+                            <p><strong>Experience:</strong> ${job.experience}</p>
+                            <p><strong>Salary:</strong> ${job.salary_range}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            document.getElementById('jobsList').innerHTML = html;
+        }
+
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const query = input.value.trim();
+            
+            if (!query) return;
+            
+            // Add user message
+            const chatHistory = document.getElementById('chatHistory');
+            chatHistory.innerHTML += `
+                <div class="bg-gray-200 p-3 rounded-lg ml-12">
+                    <p class="text-sm font-semibold text-gray-800">You</p>
+                    <p class="text-gray-700">${query}</p>
+                </div>
+            `;
+            
+            input.value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            
+            // Get AI response
+            const response = await fetch('/api/chatbot_query', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({query, context: {wallet_address: walletAddress}})
+            });
+            const data = await response.json();
+            
+            // Add AI response
+            chatHistory.innerHTML += `
+                <div class="bg-blue-100 p-3 rounded-lg mr-12">
+                    <p class="text-sm font-semibold text-blue-800">AI Assistant</p>
+                    <p class="text-gray-700 whitespace-pre-line">${data.response.message}</p>
+                </div>
+            `;
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        });
+
+        // Load certificates on page load
+        loadCertificates();
+    </script>
+</body>
+</html>
